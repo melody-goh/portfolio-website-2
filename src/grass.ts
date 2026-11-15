@@ -198,7 +198,7 @@ export class Turf {
   constructor(private ground: HTMLElement) {
     this.live = this.initGL();
     const url = this.live ? this.tileGL() : tile2d(this.blades, this.q);
-    ground.style.setProperty('--turf-img', `url(${url})`);
+    document.documentElement.style.setProperty('--turf-img', `url(${url})`);
     if (this.live) {
       this.pointer = this.makePatch(232, 46, 10, 0.05);
       this.walker = this.makePatch(132, 22, 7, 0.2);

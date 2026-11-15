@@ -1,7 +1,7 @@
 // Renders the plan into the DOM: text clearings, captioned blocks, paper
 // sheets, and the plain foam seats that fill every other cell.
 
-import { site, skills, roles, outside } from './content';
+import { site, skills, experience, outside, type Project } from './content';
 import type { Item, Plan, Section } from './layout';
 
 export const BASE = import.meta.env.BASE_URL;
@@ -24,20 +24,41 @@ function href(target: string): { url: string; attrs: string } {
   return { url: BASE + target, attrs: '' };
 }
 
-const block = (label: string) => `<span class="blk" data-label="${esc(label)}"><span class="blk__top"></span></span>`;
+const block = (label?: string) =>
+  `<span class="blk"${label ? ` data-label="${esc(label)}"` : ''}><span class="blk__top"></span></span>`;
+
+/** The project's tools as a care-label composition list. */
+export function composition(p: Project): string[] {
+  return p.tools.map((t, i) => (p.toolShare?.[i] != null ? `${p.toolShare[i]}% ${t}` : t));
+}
+
+const careTag = (p: Project) =>
+  `<span class="care-tag" aria-hidden="true"><span class="care-tag__head">Composition</span><span class="care-tag__list">${composition(p)
+    .map((c) => `<span>${esc(c)}</span>`)
+    .join('')}</span>${foot(p)}</span>`;
+
+const foot = (p: Project) => {
+  const parts = [p.year, p.role].filter(Boolean) as string[];
+  return parts.length ? `<span class="care-tag__foot">${parts.map(esc).join(' · ')}</span>` : '';
+};
 
 function sheet(type: string): string {
   if (type === 'skills')
     return `<div class="sheet__cols">${skills
       .map((g) => `<div><h3>${esc(g.title)}</h3><ul>${g.items.map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div>`)
       .join('')}</div>`;
-  if (type === 'roles')
-    return `<ol class="sheet__rows">${roles
+  if (type === 'experience')
+    return experience
       .map(
-        (r) =>
-          `<li><span class="label">${esc(r.dates)}</span><div><h3>${esc(r.role)}</h3><p class="sheet__org">${esc(r.org)}</p></div><p>${esc(r.note)}</p></li>`,
+        (g) =>
+          `<h3 class="sheet__group">${esc(g.title)}</h3><ol class="sheet__rows">${g.entries
+            .map(
+              (r) =>
+                `<li><span class="label">${esc(r.dates)}</span><div><h4>${esc(r.role)}</h4><p class="sheet__org">${esc(r.org)}</p></div><p>${esc(r.note)}</p></li>`,
+            )
+            .join('')}</ol>`,
       )
-      .join('')}</ol>`;
+      .join('');
   return `<p class="sheet__lede">${esc(outside.note)}</p><ul class="sheet__list">${outside.items
     .map((p) => {
       const inner = `<span class="sheet__title">${esc(p.title)}</span><span class="label">${esc(p.meta)}</span>`;
@@ -62,7 +83,7 @@ function item(it: Item, sec: Section): string {
       return `<a class="spot spot--link" href="${esc(h.url)}"${h.attrs} ${pos(it)}>${block(d.hint)}<span class="cap"><span class="cap__title">${esc(d.label)}</span></span></a>`;
     }
     case 'project':
-      return `<a class="spot spot--project" href="${BASE}projects/${esc(d.slug)}" data-project="${esc(d.slug)}" ${pos(it)}>${block('Open case study')}<span class="cap"><span class="cap__title">${esc(d.title)}</span><span class="label">${esc(d.kind)}</span></span></a>`;
+      return `<a class="spot spot--project" href="${BASE}projects/${esc(d.slug)}" data-project="${esc(d.slug)}" ${pos(it)}>${block()}${careTag(d)}<span class="cap"><span class="cap__title">${esc(d.title)}</span><span class="label">${esc(d.kind)}</span></span></a>`;
     case 'sheet':
       return `<div class="sheet sheet--${d}" ${pos(it)}>${sheet(d)}</div>`;
   }

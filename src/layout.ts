@@ -106,16 +106,16 @@ export function buildPlan(cols: Cols): Plan {
   {
     const at: Box[] = by(
       cols,
-      [[1, 1], [5, 1], [9, 1], [3, 3], [7, 3]].map(([c, r]) => ({ c, r, w: 3, h: 1 })),
-      [[0, 1], [4, 1], [2, 3], [0, 5], [4, 5]].map(([c, r]) => ({ c, r, w: 4, h: 1 })),
-      [1, 2, 3, 4, 5].map((r) => ({ c: 0, r, w: 4, h: 1 })),
+      [[1, 1], [5, 1], [9, 1], [1, 3], [5, 3], [9, 3]].map(([c, r]) => ({ c, r, w: 3, h: 1 })),
+      [[0, 1], [4, 1], [0, 3], [4, 3], [0, 5], [4, 5]].map(([c, r]) => ({ c, r, w: 4, h: 1 })),
+      [1, 2, 3, 4, 5, 6].map((r) => ({ c: 0, r, w: 4, h: 1 })),
     );
     const items = projects.map((p, i): Item => ({ kind: 'project', ...at[i % at.length], data: p }));
-    section('projects', 'Projects', items, by(cols, 5, 7, 7));
+    section('projects', 'Projects', items, by(cols, 5, 7, 8));
   }
 
-  section('skills', 'Skills', [sheet('skills', by(cols, { c: 1, r: 1, w: 7, h: 3 }, { c: 1, r: 1, w: 6, h: 3 }, { c: 0, r: 1, w: 4, h: 5 }))], by(cols, 5, 5, 7));
-  section('experience', 'Experience', [sheet('roles', by(cols, { c: 3, r: 1, w: 8, h: 3 }, { c: 1, r: 1, w: 7, h: 4 }, { c: 0, r: 1, w: 4, h: 6 }))], by(cols, 5, 6, 8));
+  section('skills', 'Skills', [sheet('skills', by(cols, { c: 1, r: 1, w: 9, h: 3 }, { c: 1, r: 1, w: 6, h: 5 }, { c: 0, r: 1, w: 4, h: 8 }))], by(cols, 5, 7, 10));
+  section('experience', 'Experience', [sheet('experience', by(cols, { c: 2, r: 1, w: 9, h: 8 }, { c: 0, r: 1, w: 8, h: 11 }, { c: 0, r: 1, w: 4, h: 22 }))], by(cols, 10, 13, 24));
   section('outside', 'Outside work', [sheet('outside', by(cols, { c: 1, r: 1, w: 6, h: 3 }, { c: 1, r: 1, w: 6, h: 3 }, { c: 0, r: 1, w: 4, h: 4 }))], by(cols, 5, 5, 6));
 
   // Contact: the close of the route.

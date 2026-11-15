@@ -14,6 +14,12 @@
   --foam-top-lo: #8eb2ea;
   --foam-side-lo: #456fcb;
   --lawn-shade: 16 32 8;
+  --night: 7 16 6;
+  --rig: #161915;
+  --rig-edge: #3d4239;
+  --lamp-off: #2b2f29;
+  --lamp-on: #fff7dc;
+  --lamp-throw: 255 248 214;
 
   --serif: 'Instrument Serif', 'Iowan Old Style', 'Times New Roman', serif;
   --sans: 'Inter Variable', 'Inter', system-ui, sans-serif;
@@ -244,9 +250,9 @@ a {
     gap: 0;
     padding: 0 6px;
   }
-  .route a {
-    font-size: 0.625rem !important;
-    letter-spacing: 0.12em !important;
+  .bar .route a {
+    font-size: 0.625rem;
+    letter-spacing: 0.12em;
     padding-bottom: 10px;
   }
   .route ol::before {
@@ -487,7 +493,7 @@ a {
   transition: box-shadow 0.55s var(--ease);
 }
 /* Label tag in the aisle above the block. */
-.blk::before {
+.blk[data-label]::before {
   content: attr(data-label);
   position: absolute;
   z-index: 3;
@@ -535,6 +541,50 @@ a {
 :is(.spot:hover, .spot:focus-visible) .blk::before {
   opacity: 1;
   transform: translate(-50%, 0);
+}
+
+/* Care label: the project's composition, shown when its block lifts. */
+.care-tag {
+  position: absolute;
+  z-index: 6;
+  left: calc(var(--inset) - 6px);
+  bottom: calc(50% + (var(--bs) + var(--fh)) / 2 + 14px);
+  display: grid;
+  gap: 7px;
+  min-width: 10.5rem;
+  max-width: 15rem;
+  padding: 11px 13px 10px;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 0.75rem/1.4 var(--sans);
+  text-shadow: none;
+  box-shadow: 1px 3px 8px rgb(var(--lawn-shade) / 0.45);
+  outline: 1px dashed rgb(19 21 18 / 0.32);
+  outline-offset: -5px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.25s,
+    transform 0.55s var(--ease);
+  pointer-events: none;
+}
+.care-tag__head,
+.care-tag__foot {
+  font: 500 0.625rem/1.3 var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.care-tag__list {
+  display: grid;
+}
+.care-tag__foot {
+  color: var(--ink-soft);
+  padding-top: 6px;
+  border-top: 1px solid var(--rule);
+}
+:is(.spot:hover, .spot:focus-visible) .care-tag {
+  opacity: 1;
+  transform: none;
 }
 
 /* A block with its caption set on the grass beside it. */
@@ -589,6 +639,18 @@ a {
 .sheet h3 {
   font-size: 1.625rem;
   line-height: 1.05;
+}
+.sheet h4 {
+  font: 400 1.375rem/1.1 var(--serif);
+}
+.sheet .sheet__group {
+  font: 500 0.6875rem/1.3 var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding-bottom: 10px;
+}
+.sheet__rows + .sheet__group {
+  margin-top: 34px;
 }
 .sheet__cols {
   display: grid;
@@ -672,6 +734,86 @@ a {
   gap: 8px 32px;
   padding: 22px var(--gutter);
   color: var(--ink-soft);
+}
+
+/* ---------- 404: an empty patch of grass with one block ---------- */
+
+.lost {
+  --cell: clamp(130px, 18vw, 200px);
+  --bs: calc(var(--cell) * 0.38);
+  --fh: calc(var(--bs) * 0.3);
+  --inset: calc((var(--cell) - var(--bs)) / 2);
+  position: fixed;
+  inset: var(--bar) 0 0 0;
+  z-index: 40;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 8px;
+  padding: 24px var(--gutter);
+  background: var(--turf) var(--turf-img, none) 0 0 / 512px 512px;
+  text-align: center;
+  overflow: auto;
+}
+.lost[hidden] {
+  display: none;
+}
+.lost::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 34% 40% at 50% 42%, rgb(255 250 214 / 0.14), rgb(255 250 214 / 0) 70%),
+    radial-gradient(ellipse 80% 80% at 50% 45%, rgb(8 20 4 / 0) 40%, rgb(8 20 4 / 0.55) 100%);
+}
+.lost__plot,
+.lost__copy {
+  position: relative;
+}
+.lost__plot {
+  width: var(--cell);
+}
+.lost__copy {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  max-width: 34rem;
+  color: var(--paper);
+  text-shadow:
+    0 1px 1px rgb(var(--lawn-shade) / 0.65),
+    0 2px 14px rgb(var(--lawn-shade) / 0.5);
+}
+.lost h1 {
+  font-size: clamp(2.5rem, 6vw, 4.25rem);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  outline: none;
+}
+.lost p {
+  font: 400 clamp(1.125rem, 2vw, 1.375rem) / 1.3 var(--serif);
+  text-wrap: pretty;
+}
+.lost__back {
+  margin-top: 10px;
+  padding: 11px 16px;
+  border: 1px solid var(--paper);
+  font: 500 0.6875rem/1.3 var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  text-shadow: none;
+  transition:
+    background 0.3s,
+    color 0.3s;
+}
+.lost__back:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+.lost__back:focus-visible {
+  outline-color: var(--paper);
 }
 
 /* ---------- Case study ---------- */
@@ -758,22 +900,17 @@ a {
   font-size: 0.9375rem;
   line-height: 1.45;
 }
-.case__figure,
+.case .care {
+  padding: 14px 16px 13px;
+  border: 1px solid var(--ink);
+  outline: 1px dashed rgb(19 21 18 / 0.3);
+  outline-offset: -6px;
+}
+.case .care dd {
+  display: grid;
+}
 .case__body {
   grid-column: 2;
-}
-.case__figure {
-  padding-top: 40px;
-}
-.case__plate {
-  aspect-ratio: 16 / 9;
-  background: var(--blue);
-  border-radius: 3px;
-}
-.case__figure figcaption {
-  margin-top: 10px;
-  font-size: 0.8125rem;
-  color: var(--ink-soft);
 }
 .case__body section {
   margin-top: 56px;
@@ -818,9 +955,166 @@ a {
     grid-template-columns: 1fr 1fr;
     padding-top: 28px;
   }
-  .case__figure,
   .case__body {
     grid-column: 1;
+  }
+}
+
+/* ---------- Opening cue: the hall's sixteen light banks strike in turn ---------- */
+
+/* Built by src/opening.ts, once per visitor, and removed when the cue ends.
+   Only opacity animates. --n is the bank's place down the wall, --i its turn. */
+.cue {
+  --first: 100ms;
+  --step: 50ms;
+  --lamp-cell: 8px;
+  --lamp-line: 2px;
+  --lamp-x: 10px;
+  position: fixed;
+  inset: var(--bar) 0 0 0;
+  z-index: 45;
+  overflow: hidden;
+  contain: strict;
+  pointer-events: none;
+  animation: cue-out 0.3s 1.2s linear forwards;
+}
+.cue--cut {
+  animation: cue-out 0.12s linear forwards;
+}
+.cue i {
+  position: absolute;
+  display: block;
+}
+.cue__dark {
+  position: absolute;
+  inset: 0;
+}
+/* The name's own light is on from the first frame. */
+.cue__dark--keyed {
+  -webkit-mask-image: radial-gradient(ellipse var(--kw) var(--kh) at var(--kx) var(--ky), transparent 70%, #000);
+  mask-image: radial-gradient(ellipse var(--kw) var(--kh) at var(--kx) var(--ky), transparent 70%, #000);
+}
+.cue__base {
+  inset: 0;
+  background: rgb(var(--night) / 0.5);
+  animation: cue-lift 0.95s var(--first) linear forwards;
+}
+.cue__shade {
+  left: 0;
+  top: calc((var(--n) + 0.5) * 12.5% - 24vh);
+  width: 80%;
+  height: 48vh;
+  background: radial-gradient(
+    ellipse 100% 50% at 0 50%,
+    rgb(var(--night) / 0.9),
+    rgb(var(--night) / 0.62) 50%,
+    rgb(var(--night) / 0)
+  );
+  animation: cue-lift 0.26s calc(var(--first) + var(--i) * var(--step)) var(--ease) forwards;
+}
+.cue__shade--r {
+  left: auto;
+  right: 0;
+  transform: scaleX(-1);
+}
+/* A bank: a bracket off the wall, a dark housing, a grid of lamp cells. */
+.cue__bank {
+  left: 0;
+  top: calc((var(--n) + 0.5) * 12.5%);
+  width: 100%;
+  height: 0;
+}
+.cue__bank--r {
+  transform: scaleX(-1);
+}
+.cue__bank::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -2px;
+  width: var(--lamp-x);
+  height: 4px;
+  background: var(--rig);
+}
+.cue__lamp {
+  left: var(--lamp-x);
+  top: calc(var(--lamp-cell) * -2 - var(--lamp-line) / 2);
+  width: calc(var(--lamp-cell) * 3 + var(--lamp-line));
+  height: calc(var(--lamp-cell) * 4 + var(--lamp-line));
+  background: var(--rig);
+  box-shadow:
+    0 0 0 1px var(--rig-edge),
+    2px 3px 5px rgb(var(--night) / 0.55);
+}
+.cue__lamp::before,
+.cue__lamp::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, var(--rig) var(--lamp-line), transparent var(--lamp-line)) 0 0 / var(--lamp-cell) var(--lamp-cell),
+    linear-gradient(var(--rig) var(--lamp-line), transparent var(--lamp-line)) 0 0 / var(--lamp-cell) var(--lamp-cell),
+    var(--lamp-off);
+}
+.cue__lamp::after {
+  background-color: var(--lamp-on);
+  opacity: 0;
+  animation: cue-strike 0.26s calc(var(--first) + var(--i) * var(--step)) var(--ease) forwards;
+}
+/* The throw: a soft warm pool on the grass in front of the bank. */
+.cue__throw {
+  left: 0;
+  top: -110px;
+  width: 320px;
+  height: 220px;
+  background: radial-gradient(
+    ellipse 280px 105px at 34px 50%,
+    rgb(var(--lamp-throw) / 0.3),
+    rgb(var(--lamp-throw) / 0.1) 45%,
+    rgb(var(--lamp-throw) / 0)
+  );
+  opacity: 0;
+  animation: cue-strike 0.26s calc(var(--first) + var(--i) * var(--step)) var(--ease) forwards;
+}
+@media (max-width: 639px) {
+  .cue {
+    --lamp-cell: 4px;
+    --lamp-line: 1px;
+    --lamp-x: 1px;
+  }
+  .cue__bank::before {
+    content: none;
+  }
+  .cue__lamp {
+    width: calc(var(--lamp-cell) * 2 + var(--lamp-line));
+    height: calc(var(--lamp-cell) * 3 + var(--lamp-line));
+    top: calc(var(--lamp-cell) * -1.5 - var(--lamp-line) / 2);
+  }
+  .cue__throw {
+    top: -60px;
+    width: 150px;
+    height: 120px;
+    background: radial-gradient(
+      ellipse 130px 56px at 8px 50%,
+      rgb(var(--lamp-throw) / 0.3),
+      rgb(var(--lamp-throw) / 0.1) 45%,
+      rgb(var(--lamp-throw) / 0)
+    );
+  }
+}
+@keyframes cue-lift {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes cue-strike {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes cue-out {
+  to {
+    opacity: 0;
   }
 }
 

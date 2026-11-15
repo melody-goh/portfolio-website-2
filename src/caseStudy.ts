@@ -3,13 +3,15 @@
 // all behave.
 
 import { projects, site, type Project } from './content';
-import { BASE, esc } from './field';
+import { BASE, composition, esc } from './field';
 
 const EASE = 'cubic-bezier(0.16, 1, 0.3, 1)';
 const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+const restOf = (path: string) => (path.startsWith(BASE) ? path.slice(BASE.length) : path.replace(/^\//, ''));
+export const isHome = (path: string) => /^(index\.html)?$/.test(restOf(path));
 const slugOf = (path: string): string | null => {
-  const rest = path.startsWith(BASE) ? path.slice(BASE.length) : path.replace(/^\//, '');
+  const rest = restOf(path);
   const m = /^projects\/([^/]+)\/?$/.exec(rest);
   return m ? decodeURIComponent(m[1]) : null;
 };
@@ -24,14 +26,10 @@ function page(p: Project): string {
     </header>
     <dl class="case__meta">
       <div><dt>Type</dt><dd>${esc(p.kind)}</dd></div>
-      <div><dt>Year</dt><dd>${esc(p.year)}</dd></div>
-      <div><dt>Role</dt><dd>${esc(p.role)}</dd></div>
-      <div><dt>Tools</dt><dd>${p.tools.map(esc).join(', ')}</dd></div>
+      ${p.year ? `<div><dt>Year</dt><dd>${esc(p.year)}</dd></div>` : ''}
+      ${p.role ? `<div><dt>Role</dt><dd>${esc(p.role)}</dd></div>` : ''}
+      <div class="care"><dt>Composition</dt><dd>${composition(p).map((c) => `<span>${esc(c)}</span>`).join('')}</dd></div>
     </dl>
-    <figure class="case__figure">
-      <div class="case__plate"></div>
-      <figcaption>Placeholder figure. Replace with a chart, diagram or screenshot from the project.</figcaption>
-    </figure>
     <div class="case__body">
       ${p.sections
         .map((s) => `<section><h2>${esc(s.heading)}</h2>${s.body.map((t) => `<p>${esc(t)}</p>`).join('')}</section>`)
@@ -48,8 +46,39 @@ export function initRouter(home: HTMLElement[], onChange: (open: boolean) => voi
   const scroller = root.querySelector<HTMLElement>('.case__scroll')!;
   const article = root.querySelector<HTMLElement>('.case__page')!;
   const wash = root.querySelector<HTMLElement>('.case__wash')!;
+  const lost = document.getElementById('lost')!;
   const homeTitle = document.title;
   let current: string | null = null;
+  let lostOn = false;
+
+  /** 404: any address that is neither the field nor a known project. */
+  function showLost() {
+    if (lostOn) return;
+    lostOn = true;
+    lost.hidden = false;
+    home.forEach((el) => (el.inert = true));
+    document.documentElement.classList.add('case-open');
+    document.title = `Page not found · ${site.name}`;
+    const robots = document.createElement('meta');
+    robots.name = 'robots';
+    robots.content = 'noindex';
+    robots.id = 'lost-robots';
+    document.head.append(robots);
+    onChange(true);
+    lost.querySelector<HTMLElement>('h1')!.focus({ preventScroll: true });
+  }
+  function hideLost() {
+    if (!lostOn) return;
+    lostOn = false;
+    lost.hidden = true;
+    document.getElementById('lost-robots')?.remove();
+    if (current === null) {
+      home.forEach((el) => (el.inert = false));
+      document.documentElement.classList.remove('case-open');
+      document.title = homeTitle;
+      onChange(false);
+    }
+  }
 
   const block = (slug: string) =>
     document.querySelector<HTMLElement>(`[data-project="${CSS.escape(slug)}"] .blk__top`);
@@ -124,18 +153,20 @@ export function initRouter(home: HTMLElement[], onChange: (open: boolean) => voi
 
   function sync(animate: boolean) {
     const slug = slugOf(location.pathname);
-    if (slug && !projects.some((p) => p.slug === slug)) {
-      history.replaceState(null, '', BASE);
-      return sync(false);
+    if (!isHome(location.pathname) && !(slug && projects.some((p) => p.slug === slug))) {
+      if (current !== null) close(false);
+      return showLost();
     }
+    hideLost();
     if (slug === current) return;
     if (slug) open(slug, animate);
     else close(animate);
   }
 
+  const away = () => current !== null || lostOn;
   const goHome = () => {
-    if (current === null) return;
-    if (history.state?.fromField) history.back();
+    if (!away()) return;
+    if (current !== null && history.state?.fromField) history.back();
     else {
       history.pushState(null, '', BASE);
       sync(true);
@@ -143,7 +174,7 @@ export function initRouter(home: HTMLElement[], onChange: (open: boolean) => voi
   };
 
   const goSection = (id: string) => {
-    if (current !== null) {
+    if (away()) {
       history.pushState(null, '', `${BASE}#${id}`);
       sync(false);
     } else history.replaceState(history.state, '', `${BASE}#${id}`);
@@ -162,7 +193,7 @@ export function initRouter(home: HTMLElement[], onChange: (open: boolean) => voi
       goSection(a.dataset.section);
     } else if (a.hasAttribute('data-home')) {
       e.preventDefault();
-      if (current !== null) goHome();
+      if (away()) goHome();
       else window.scrollTo({ top: 0 });
     } else if (slugOf(url.pathname)) {
       e.preventDefault();
@@ -174,7 +205,7 @@ export function initRouter(home: HTMLElement[], onChange: (open: boolean) => voi
 
   addEventListener('popstate', () => sync(true));
   addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && current !== null) goHome();
+    if (e.key === 'Escape' && away()) goHome();
   });
 
   sync(false);
