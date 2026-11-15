@@ -16,13 +16,25 @@ const slugOf = (path: string): string | null => {
   return m ? decodeURIComponent(m[1]) : null;
 };
 
+function gallery(shots: NonNullable<Project['gallery']>): string {
+  const wide = shots.some((s) => s.device === 'browser');
+  return `<div class="case__gallery${wide ? ' case__gallery--wide' : ''}">${shots
+    .map(
+      (s) =>
+        `<figure class="shot shot--${s.device}${s.span ? ' shot--span' : ''}"><img src="${BASE}${esc(s.src)}" alt="${esc(s.alt)}" loading="lazy" decoding="async"><figcaption>${esc(s.caption)}</figcaption></figure>`,
+    )
+    .join('')}</div>`;
+}
+
 function page(p: Project): string {
   const next = projects[(projects.indexOf(p) + 1) % projects.length];
   return `
-    <a class="case__back" href="${BASE}" data-home>Back to the field</a>
+    <a class="case__back" href="${BASE}" data-home><svg class="arrow" viewBox="0 0 16 10" aria-hidden="true"><path d="M15 5H1.5M5.5 1 1.5 5l4 4"/></svg>Back to the field</a>
     <header class="case__head">
       <h1 id="case-title" tabindex="-1">${esc(p.title)}</h1>
       <p class="case__summary">${esc(p.summary)}</p>
+      ${p.link ? `<a class="case__link" href="${esc(p.link.url)}" target="_blank" rel="noopener">${esc(p.link.label)}<svg class="arrow arrow--out" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 8 8.5 1.5M3 1.5h5.5V7"/></svg></a>` : ''}
+      ${p.gallery ? gallery(p.gallery) : ''}
     </header>
     <dl class="case__meta">
       <div><dt>Type</dt><dd>${esc(p.kind)}</dd></div>

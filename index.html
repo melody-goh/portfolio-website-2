@@ -10,6 +10,17 @@
     />
     <meta name="theme-color" content="#f4f2ea" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Melody Goh" />
+    <meta
+      property="og:description"
+      content="Business Analytics at NUS, specialising in machine learning. Projects, experience and résumé."
+    />
+    <meta property="og:image" content="/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <a class="skip" href="/#projects" data-section="projects">Skip to projects</a>
@@ -25,7 +36,7 @@
         </ol>
         <span class="route__dot" aria-hidden="true"></span>
       </nav>
-      <a class="bar__resume" href="/resume.pdf">Résumé</a>
+      <a class="bar__resume" href="/resume.pdf" target="_blank" rel="noopener">Résumé</a>
     </header>
 
     <main class="ground" id="ground">
@@ -34,10 +45,10 @@
 
     <footer class="foot">
       <p>© 2026 Melody Goh</p>
-      <p>After the Prada Men’s SS12 “Field” set by OMA/AMO.</p>
+      <p>After the <a href="https://www.prada.com/ww/en/pradasphere/fashion-shows/2012/ss-menswear.html" target="_blank" rel="noopener">Prada Men’s SS12</a> set by OMA/AMO.</p>
     </footer>
 
-    <div class="case" id="case" hidden>
+    <div class="case" id="case" role="region" aria-labelledby="case-title" hidden>
       <div class="case__scroll">
         <article class="case__page" aria-labelledby="case-title"></article>
       </div>
@@ -51,13 +62,13 @@
       <div class="lost__copy">
         <h1 id="lost-title" tabindex="-1">You’ve wandered off the runway.</h1>
         <p>There’s no page at this address. It may have moved, or the link may be mistyped.</p>
-        <a class="lost__back" href="/" data-home>Back to the field</a>
+        <a class="lost__back" href="/" data-home><svg class="arrow" viewBox="0 0 16 10" aria-hidden="true"><path d="M15 5H1.5M5.5 1 1.5 5l4 4"/></svg>Back to the field</a>
       </div>
     </div>
 
     <noscript>
       <p class="noscript">
-        This site lays its content out with JavaScript. The <a href="/resume.pdf">résumé (PDF)</a> is available without
+        This site lays its content out with JavaScript. The <a href="/resume.pdf" target="_blank" rel="noopener">résumé (PDF)</a> is available without
         it.
       </p>
     </noscript>

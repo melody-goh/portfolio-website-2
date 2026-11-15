@@ -19,7 +19,8 @@ const rowName = (n: number) => {
 };
 
 function href(target: string): { url: string; attrs: string } {
-  if (/^https?:/.test(target)) return { url: target, attrs: ' target="_blank" rel="noopener"' };
+  if (/^https?:|\.pdf$/.test(target))
+    return { url: /^https?:/.test(target) ? target : BASE + target, attrs: ' target="_blank" rel="noopener"' };
   if (target.startsWith('#')) return { url: BASE + target, attrs: ` data-section="${target.slice(1)}"` };
   return { url: BASE + target, attrs: '' };
 }
@@ -59,12 +60,19 @@ function sheet(type: string): string {
             .join('')}</ol>`,
       )
       .join('');
-  return `<p class="sheet__lede">${esc(outside.note)}</p><ul class="sheet__list">${outside.items
-    .map((p) => {
-      const inner = `<span class="sheet__title">${esc(p.title)}</span><span class="label">${esc(p.meta)}</span>`;
-      return `<li>${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${inner}</a>` : inner}</li>`;
-    })
-    .join('')}</ul>`;
+  const ref = outside.reference;
+  const note = esc(outside.note).replace(
+    esc(ref.text),
+    `<a href="${esc(ref.url)}" target="_blank" rel="noopener">${esc(ref.text)}</a>`,
+  );
+  return `<p class="sheet__lede">${note}</p>${outside.groups
+    .map(
+      (g) =>
+        `<h3 class="sheet__group">${esc(g.title)}</h3><ul class="sheet__list">${g.items
+          .map((p) => `<li><span class="sheet__title">${esc(p.title)}</span><span class="sheet__meta">${esc(p.meta)}</span></li>`)
+          .join('')}</ul>`,
+    )
+    .join('')}`;
 }
 
 function item(it: Item, sec: Section): string {

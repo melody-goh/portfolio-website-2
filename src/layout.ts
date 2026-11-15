@@ -116,7 +116,7 @@ export function buildPlan(cols: Cols): Plan {
 
   section('skills', 'Skills', [sheet('skills', by(cols, { c: 1, r: 1, w: 9, h: 3 }, { c: 1, r: 1, w: 6, h: 5 }, { c: 0, r: 1, w: 4, h: 8 }))], by(cols, 5, 7, 10));
   section('experience', 'Experience', [sheet('experience', by(cols, { c: 2, r: 1, w: 9, h: 8 }, { c: 0, r: 1, w: 8, h: 11 }, { c: 0, r: 1, w: 4, h: 22 }))], by(cols, 10, 13, 24));
-  section('outside', 'Outside work', [sheet('outside', by(cols, { c: 1, r: 1, w: 6, h: 3 }, { c: 1, r: 1, w: 6, h: 3 }, { c: 0, r: 1, w: 4, h: 4 }))], by(cols, 5, 5, 6));
+  section('outside', 'Outside work', [sheet('outside', by(cols, { c: 1, r: 1, w: 7, h: 4 }, { c: 1, r: 1, w: 6, h: 5 }, { c: 0, r: 1, w: 4, h: 7 }))], by(cols, 6, 7, 9));
 
   // Contact: the close of the route.
   {
