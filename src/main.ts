@@ -7,7 +7,6 @@ import { renderField } from './field';
 import { Route } from './route';
 import { Turf } from './grass';
 import { initRouter } from './caseStudy';
-import { playOpening } from './opening';
 
 const ground = document.getElementById('ground')!;
 const field = document.getElementById('field')!;
@@ -98,7 +97,6 @@ new ResizeObserver(layout).observe(field);
 addEventListener('resize', layout);
 document.fonts?.ready.then(() => route.measure());
 layout();
-playOpening(bar);
 
 initRouter([ground, foot], (open) => {
   caseOpen = open;

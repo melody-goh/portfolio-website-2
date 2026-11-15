@@ -7,7 +7,6 @@ My personal portfolio site. The layout borrows from the set OMA/AMO designed for
 - A field of foam blocks on procedurally drawn turf (WebGL, with a Canvas 2D fallback). Blades bend around the cursor and the route dot.
 - A route line that walks between the blocks as you scroll and doubles as section navigation. It recomputes when the grid reflows (12, 8 or 4 columns).
 - Case studies at `/projects/<slug>`, opened from their block with an expanding transition. Back, forward, deep links and Escape all work.
-- A short floodlight opening on first visit, skipped for returning visitors and under reduced motion.
 - A 404 page for unknown addresses.
 
 ## Stack
@@ -48,7 +47,6 @@ src/
   route.ts       the route line and travelling dot
   grass.ts       procedural turf
   caseStudy.ts   case study pages, routing and the 404 page
-  opening.ts     first-visit lighting cue
   styles.css     all styles
 public/          résumé, screenshots, icons and preview image
 ```

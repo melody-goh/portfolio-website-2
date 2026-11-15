@@ -9,7 +9,7 @@ const EASE = 'cubic-bezier(0.16, 1, 0.3, 1)';
 const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const restOf = (path: string) => (path.startsWith(BASE) ? path.slice(BASE.length) : path.replace(/^\//, ''));
-export const isHome = (path: string) => /^(index\.html)?$/.test(restOf(path));
+const isHome = (path: string) => /^(index\.html)?$/.test(restOf(path));
 const slugOf = (path: string): string | null => {
   const rest = restOf(path);
   const m = /^projects\/([^/]+)\/?$/.exec(rest);
